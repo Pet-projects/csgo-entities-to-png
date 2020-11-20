@@ -34,17 +34,18 @@ public class EntitiesToPng {
         Object obj = parser.parse(new FileReader( inputPathname ));
         for (Object o : (JSONArray) obj) {
             JSONObject jsonObject = (JSONObject) o;
-            System.out.println(jsonObject.get("token"));
+            System.out.println(jsonObject.get("door_name"));
             String originString = (String) jsonObject.get("origin");
             String[] originParts = originString.split("\\s+");
 
             float originX = Float.parseFloat(originParts[0]);
             float originY = Float.parseFloat(originParts[1]);
             float originZ = Float.parseFloat(originParts[2]);
+            Point origin = new Point(originX, originY, originZ);
+            System.out.println(origin);
 
-            float scaledOriginX = (originX - POS_X)/ SCALE;
-            float scaledOriginY = (POS_Y - originY)/ SCALE;
-            float scaledOriginZ = originZ/ SCALE;
+            Point scaledOrigin = scaleAndTranslateOrigin(origin);
+            System.out.println(scaledOrigin);
 
             String radiusString = (String) jsonObject.get("radius");
             float scaledRadius;
@@ -56,11 +57,28 @@ public class EntitiesToPng {
             }
 
             g.setColor(Color.black);
-            g.drawOval(Math.round(scaledOriginX - scaledRadius), Math.round(scaledOriginY - scaledRadius), Math.round(2*scaledRadius), Math.round(2*scaledRadius));
+            drawPoint(g, scaledOrigin, scaledRadius);
 //            break;
         }
+        g.setColor(Color.red);
+        drawPoint(g, scaleAndTranslateOrigin(new Point(0,0,0)), 3);
 
         File outfile = new File(outputPathname);
         ImageIO.write(bufferedImage, "png", outfile);
+    }
+
+    private static void drawPoint(Graphics2D g, Point scaledOrigin, float scaledRadius) {
+        int boxX = Math.round(scaledOrigin.getX() - scaledRadius);
+        int boxY = Math.round(scaledOrigin.getY() - scaledRadius);
+        int width = Math.round(2 * scaledRadius);
+        int height = Math.round(2 * scaledRadius);
+        g.drawOval(boxX, boxY, width, height);
+    }
+
+    private static Point scaleAndTranslateOrigin(Point origin) {
+        float scaledOriginX = (origin.getX() - POS_X)/ SCALE;
+        float scaledOriginY = (POS_Y - origin.getY())/ SCALE;
+        float scaledOriginZ = origin.getZ()/ SCALE;
+        return new Point(scaledOriginX, scaledOriginY, scaledOriginZ);
     }
 }
