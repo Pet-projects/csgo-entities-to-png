@@ -11,9 +11,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class EntitiesToPng {
-    private static final float POS_X = - 8604;
-    private static final float POS_Y = 8804;
-    private static final float SCALE = 17;
 
     public static void main(String[] args) throws IOException, ParseException {
         if (args.length < 2) {
@@ -41,44 +38,34 @@ public class EntitiesToPng {
             float originX = Float.parseFloat(originParts[0]);
             float originY = Float.parseFloat(originParts[1]);
             float originZ = Float.parseFloat(originParts[2]);
-            Point origin = new Point(originX, originY, originZ);
+            EntityPoint origin = new EntityPoint(originX, originY);
             System.out.println(origin);
 
-            Point scaledOrigin = scaleAndTranslateOrigin(origin);
-            System.out.println(scaledOrigin);
+            OverviewPoint overviewPoint = CoordTranslation.toOverviewPoint(origin);
+            System.out.println(overviewPoint);
 
             String radiusString = (String) jsonObject.get("radius");
             float scaledRadius;
             if (radiusString != null) {
                 float radius = Float.parseFloat(radiusString);
-                scaledRadius = radius/ SCALE;
+                scaledRadius = CoordTranslation.scaleRadius(radius);
             } else {
                 scaledRadius = 5;
             }
 
             g.setColor(Color.black);
-            drawPoint(g, scaledOrigin, scaledRadius);
-//            break;
+            drawPoint(g, overviewPoint, scaledRadius);
         }
-        g.setColor(Color.red);
-        drawPoint(g, scaleAndTranslateOrigin(new Point(0,0,0)), 3);
 
         File outfile = new File(outputPathname);
         ImageIO.write(bufferedImage, "png", outfile);
     }
 
-    private static void drawPoint(Graphics2D g, Point scaledOrigin, float scaledRadius) {
-        int boxX = Math.round(scaledOrigin.getX() - scaledRadius);
-        int boxY = Math.round(scaledOrigin.getY() - scaledRadius);
-        int width = Math.round(2 * scaledRadius);
-        int height = Math.round(2 * scaledRadius);
+    private static void drawPoint(Graphics2D g, OverviewPoint overviewPoint, float overviewRadius) {
+        int boxX = Math.round(overviewPoint.x - overviewRadius);
+        int boxY = Math.round(overviewPoint.y - overviewRadius);
+        int width = Math.round(2 * overviewRadius);
+        int height = Math.round(2 * overviewRadius);
         g.drawOval(boxX, boxY, width, height);
-    }
-
-    private static Point scaleAndTranslateOrigin(Point origin) {
-        float scaledOriginX = (origin.getX() - POS_X)/ SCALE;
-        float scaledOriginY = (POS_Y - origin.getY())/ SCALE;
-        float scaledOriginZ = origin.getZ()/ SCALE;
-        return new Point(scaledOriginX, scaledOriginY, scaledOriginZ);
     }
 }
