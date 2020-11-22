@@ -31,7 +31,17 @@ public class EntitiesToPng {
         Object obj = parser.parse(new FileReader( inputPathname ));
         for (Object o : (JSONArray) obj) {
             JSONObject jsonObject = (JSONObject) o;
-            System.out.println(jsonObject.get("door_name"));
+
+            if (jsonObject.containsKey("door_name")) {
+                System.out.println("door_name: " + jsonObject.get("door_name"));
+            }
+            if (jsonObject.containsKey("token")) {
+                System.out.println("token: " + jsonObject.get("token"));
+            }
+            if (jsonObject.containsKey("targetname")) {
+                System.out.println("targetname: " + jsonObject.get("targetname"));
+            }
+
             String originString = (String) jsonObject.get("origin");
             String[] originParts = originString.split("\\s+");
 
@@ -39,22 +49,24 @@ public class EntitiesToPng {
             float originY = Float.parseFloat(originParts[1]);
             float originZ = Float.parseFloat(originParts[2]);
             EntityPoint origin = new EntityPoint(originX, originY);
-            System.out.println(origin);
+            System.out.println("origin: "+origin);
 
             OverviewPoint overviewPoint = CoordMapping.toOverviewPoint(origin);
-            System.out.println(overviewPoint);
+            ColorMapping.Theme colorTheme;
 
-            String radiusString = (String) jsonObject.get("radius");
-            float scaledRadius;
-            if (radiusString != null) {
-                float radius = Float.parseFloat(radiusString);
-                scaledRadius = CoordMapping.scaleRadius(radius);
+            float radius;
+            if (jsonObject.containsKey("radius")) {
+                String radiusString = (String) jsonObject.get("radius");
+                radius = CoordMapping.scaleRadius(Float.parseFloat(radiusString));
+                colorTheme = ColorMapping.Theme.GREEN_TO_CYAN;
             } else {
-                scaledRadius = 5;
+                radius = 5;
+                colorTheme = ColorMapping.Theme.RED_TO_YELLOW;
             }
 
-            g.setColor(ColorMapping.fromHeight(originZ));
-            drawPoint(g, overviewPoint, scaledRadius);
+            g.setColor(ColorMapping.fromHeight(originZ, colorTheme));
+            System.out.println("overviewPoint: "+overviewPoint);
+            drawPoint(g, overviewPoint, radius);
         }
 
         File outfile = new File(outputPathname);
