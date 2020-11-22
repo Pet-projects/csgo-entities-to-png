@@ -67,6 +67,7 @@ public class EntitiesToPng {
             g.setColor(ColorMapping.fromHeight(originZ, colorTheme));
             System.out.println("overviewPoint: "+overviewPoint);
             drawPoint(g, overviewPoint, radius);
+            System.out.println("-------------------------------------------");
         }
 
         File outfile = new File(outputPathname);
