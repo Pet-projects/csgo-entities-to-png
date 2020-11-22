@@ -41,19 +41,19 @@ public class EntitiesToPng {
             EntityPoint origin = new EntityPoint(originX, originY);
             System.out.println(origin);
 
-            OverviewPoint overviewPoint = CoordTranslation.toOverviewPoint(origin);
+            OverviewPoint overviewPoint = CoordMapping.toOverviewPoint(origin);
             System.out.println(overviewPoint);
 
             String radiusString = (String) jsonObject.get("radius");
             float scaledRadius;
             if (radiusString != null) {
                 float radius = Float.parseFloat(radiusString);
-                scaledRadius = CoordTranslation.scaleRadius(radius);
+                scaledRadius = CoordMapping.scaleRadius(radius);
             } else {
                 scaledRadius = 5;
             }
 
-            g.setColor(Color.black);
+            g.setColor(ColorMapping.fromHeight(originZ));
             drawPoint(g, overviewPoint, scaledRadius);
         }
 

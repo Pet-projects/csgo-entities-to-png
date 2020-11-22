@@ -1,4 +1,4 @@
-class CoordTranslation {
+class CoordMapping {
     private static final float ENTITY_START_POS_X = -8604;
     private static final float ENTITY_START_POS_Y = 8804;
     private static final float SCALE = 17;
@@ -17,7 +17,7 @@ class CoordTranslation {
     }
 
     static float scaleRadius(float radius) {
-        return radius / CoordTranslation.SCALE;
+        return radius / CoordMapping.SCALE;
     }
 
     //~~~~~~~~~~~~~
