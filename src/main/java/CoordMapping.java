@@ -1,14 +1,22 @@
 class CoordMapping {
     private static final float ENTITY_START_POS_X = -8604;
     private static final float ENTITY_START_POS_Y = 8804;
-    private static final float SCALE = 17;
 
     private static final int PROJECTION_CAMERA_POS_X = 450;
     private static final int PROJECTION_CAMERA_POS_Y = 580;
     private static final double PROJECTION_DELTA_POWER = 1.41;
     private static final int PROJECTION_DELTA_DIVISION = 40;
+    private float scale;
+    private float entityStartPosX;
+    private float entityStartPosY;
 
-    static OverviewPoint toOverviewPoint(EntityPoint origin) {
+    CoordMapping(float entityStartPosX, float entityStartPosY, float scale) {
+        this.entityStartPosX = entityStartPosX;
+        this.entityStartPosY = entityStartPosY;
+        this.scale = scale;
+    }
+
+    OverviewPoint toOverviewPoint(EntityPoint origin) {
         EntityPoint translatedEntity = translateToOrigin(origin);
         OverviewPoint overviewPoint = scaleToOverview(translatedEntity);
         return new OverviewPoint(
@@ -16,21 +24,21 @@ class CoordMapping {
                 overviewPoint.y + projectionDelta(overviewPoint.y, PROJECTION_CAMERA_POS_Y));
     }
 
-    static float scaleRadius(float radius) {
-        return radius / CoordMapping.SCALE;
+    float scaleRadius(float radius) {
+        return radius / scale;
     }
 
     //~~~~~~~~~~~~~
 
-    private static EntityPoint translateToOrigin(EntityPoint origin) {
-        float x = origin.x - ENTITY_START_POS_X;
-        float y = ENTITY_START_POS_Y - origin.y;
+    private  EntityPoint translateToOrigin(EntityPoint origin) {
+        float x = origin.x - this.entityStartPosX;
+        float y = this.entityStartPosY - origin.y;
         return new EntityPoint(x, y);
     }
 
-    private static OverviewPoint scaleToOverview(EntityPoint entity) {
-        float overviewX = entity.x / SCALE;
-        float overviewY = entity.y / SCALE;
+    private  OverviewPoint scaleToOverview(EntityPoint entity) {
+        float overviewX = entity.x / this.scale;
+        float overviewY = entity.y / this.scale;
         return new OverviewPoint(overviewX, overviewY);
     }
 

@@ -1,8 +1,14 @@
 import java.awt.*;
 
 class ColorMapping {
-    private static final int MIN_HEIGHT = 300;
-    private static final int MAX_HEIGHT = 1200;
+
+    private final int minZ;
+    private final int maxZ;
+
+    ColorMapping(int minZ, int maxZ) {
+        this.minZ = minZ;
+        this.maxZ = maxZ;
+    }
 
     enum Theme {
         // Compute angles from here https://i.stack.imgur.com/HdZ73.png
@@ -21,15 +27,15 @@ class ColorMapping {
     /**
      * Idea from here: https://stackoverflow.com/questions/44326765/color-mapping-for-specific-range
      */
-    static Color fromHeight(float entityHeight, Theme theme) {
+    Color fromHeight(float entityHeight, Theme theme) {
         float index;
-        if (entityHeight <= MIN_HEIGHT) {
+        if (entityHeight <= minZ) {
             index = 0;
         } else
-        if (entityHeight >= MAX_HEIGHT) {
+        if (entityHeight >= maxZ) {
             index = 1;
         } else {
-            index = (entityHeight - MIN_HEIGHT) / (MAX_HEIGHT - MIN_HEIGHT);
+            index = (entityHeight - minZ) / (maxZ - minZ);
         }
 
         System.out.println("index: "+index);
